@@ -1,7 +1,7 @@
 from turtle import Screen
 from player import Player
-from car_manager import Car_manager
-import random
+from carmanager import Carmanager
+from scoreboard import Scoreboard
 import time
 
 screen = Screen()
@@ -10,8 +10,8 @@ screen.bgcolor("white")
 screen.tracer(0)
 
 player = Player()
-car_manager = Car_manager()
-car_manager.generate_cars()
+carmanager = Carmanager()
+scoreboard = Scoreboard()
 
 screen.listen()
 screen.onkey(player.move_up, "Up")
@@ -23,12 +23,21 @@ while game_is_on:
     screen.update()
     time.sleep(0.1)
 
-    car_manager.move_cars()
+    carmanager.move_cars()
     gen_count += 1
     if gen_count == 6:
-        car_manager.generate_cars()
+        carmanager.generate_cars()
         gen_count = 0
 
+    # when turtle hits car, end game
+    for car in carmanager.cars:
+        if car.distance(player) < 25:
+            game_is_on = False
+
+    # Return Player to start line once reach finish line and level up
+    if player.ycor() == 280:
+        player.player_restart()
+        carmanager.level_up()
 
 
 screen.exitonclick()
